@@ -1,0 +1,187 @@
+---
+swagger: "2.0"
+info:
+  description: A user resource with identity Information
+  title: User
+  version: 1.0.0
+consumes:
+  - application/json
+produces:
+  - application/json
+schemes:
+  - http
+host: starlight-user
+basePath: /user
+paths:
+  /healthz:
+    get:
+      tags:
+        - userhealthz
+      operationId: getHealthz
+      responses:
+        200:
+          description: Get service healthz
+          schema:
+            $ref: "#/definitions/healthz"
+  /:
+    get:
+      tags:
+        - users
+      operationId: listUsers
+      parameters:
+        - name: since
+          in: query
+          type: string
+          # bson.ObjectId
+          minLength: 12
+          maxLength: 12
+        - name: limit
+          in: query
+          type: integer
+          format: int32
+          default: 20
+      responses:
+        200:
+          description: List users
+          schema:
+            type: array
+            items:
+              $ref: "#/definitions/user"
+        default:
+          description: error
+          schema:
+            $ref: "#/definitions/error"
+    post:
+      tags:
+        - users
+      operationId: createUser
+      parameters:
+        - name: body
+          in: body
+          schema:
+            $ref: "#/definitions/user"
+      responses:
+        201:
+          description: Created
+          schema:
+            $ref: "#/definitions/user"
+        202:
+          description: Updated
+          schema:
+            $ref: "#/definitions/user"
+        default:
+          description: Error
+          schema:
+            $ref: "#/definitions/error"
+  /{id}:
+    parameters:
+      - name: id
+        required: true
+        type: string
+        in: path
+        # bson.ObjectId
+        minLength: 12
+        maxLength: 12
+    get:
+      tags:
+        - users
+      responses:
+        200:
+          description: Get
+          schema:
+            $ref: "#/definitions/user"
+        default:
+          description: Error
+          schema:
+            $ref: "#/definitions/error"
+    put:
+      tags:
+        - users
+      operationId: updateUser
+      parameters:
+        - name: body
+          in: body
+          schema:
+            $ref: "#/definitions/user"
+      responses:
+        202:
+          description: Updated
+          schema:
+            $ref: "#/definitions/user"
+        default:
+          description: Error
+          schema:
+            $ref: "#/definitions/error"
+    delete:
+      tags:
+        - users
+      operationId: deleteUser
+      responses:
+        204:
+          description: Deleted
+        default:
+          description: Error
+          schema:
+            $ref: "#/definitions/error"
+definitions:
+  healthz:
+    type: object
+    properties:
+      mongoOk:
+        type: boolean
+        default: false
+      version:
+        type: string
+        minLength: 1
+  error:
+    type: object
+    properties:
+      code:
+        type: integer
+        format: int64
+      message:
+        type: string
+  user:
+    type: object
+    properties:
+      id:
+        type: string
+        readOnly: true
+        # bson.ObjectId
+        minLength: 12
+        maxLength: 12
+      created:
+        type: string
+        format: date-time
+        readOnly: true
+      updated:
+        type: string
+        format: date-time
+        readOnly: true
+      identity:
+        type: object
+        properties:
+          provider:
+            type: string
+            minLength: 1
+          providerId:
+            type: string
+            minLength: 1
+          email:
+            type: string
+            format: email
+          familyName:
+            type: string
+          givenName:
+            type: string
+          link:
+            type: string
+          locale:
+            type: string
+          name:
+            type: string
+          pictureUrl:
+            type: string
+          verifiedEmail:
+            type: boolean
+            default: false
