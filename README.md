@@ -11,4 +11,4 @@ The User API uses a PostgreSQL database to store User records.
 
 ```/healthz``` Returns a status construct containing database connection information and metrics for the last 60 minutes of runtime.
 
-```/user``` User API, see [swagger doc](/swagger.yaml) for reference
+```/user``` User API, see [swagger doc](swagger.yaml) for reference
